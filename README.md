@@ -1,6 +1,13 @@
 # June 2026 Current Affairs – Complete 595 Questions Examination Application
 
+[![GitHub Repository](https://img.shields.io/badge/GitHub-Rishi2532%2Fjune--2026--current--affairs--quiz-blue?logo=github)](https://github.com/Rishi2532/june-2026-current-affairs-quiz)
+[![Questions](https://img.shields.io/badge/Questions-595%2F595%20Verified-brightgreen)](#)
+[![TypeScript](https://img.shields.io/badge/TypeScript-React%2018-blue?logo=typescript)](#)
+[![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-v3.4-38bdf8?logo=tailwindcss)](#)
+
 A modern, responsive, high-performance web-based examination platform built strictly following SBI Clerk / IBPS banking online examination design standards, powered by all 595 questions, multiple-choice options, correct answers, and comprehensive explanations extracted directly from `june4quiz.pdf` (`junequiz.pdf`).
+
+Repository: [https://github.com/Rishi2532/june-2026-current-affairs-quiz](https://github.com/Rishi2532/june-2026-current-affairs-quiz)
 
 ---
 
@@ -54,6 +61,10 @@ A modern, responsive, high-performance web-based examination platform built stri
    - Filter tabs: All (595), Correct, Incorrect, Unattempted, Marked for Review.
    - Jump to any question with highlight animation.
    - Expand All / Collapse All explanations toggle.
+   - **Enlarged High-Contrast Typography & Dynamic Font-Size Controls (`A`, `A+`, `A++`)**: Designed for maximum clarity and effortless reading of dense current affairs explanations.
+   - **Styled Explanation Section Badges**: Visual separation for `Short Explanation:`, `Detailed Explanation:`, `Key Highlights:`, and `About [Body]:`.
+   - **Download PDF Response Sheet**: 1-click clean export/print to PDF of the full response sheet with all questions, candidate selections, official answers, and explanations formatted without UI clutter.
+   - **Offline HTML Export**: Save entire solutions review as an offline `.html` file.
 
 ---
 
