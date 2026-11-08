@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-slate-100 text-slate-900 antialiased font-sans select-none;
+  }
+}
+
+/* Custom scrollbars for clean banking exam palette */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Print Styles for PDF Download of Response Sheet */
+@media print {
+  @page {
+    size: A4;
+    margin: 15mm 15mm 15mm 15mm;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    font-size: 13pt !important;
+    line-height: 1.5 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Hide web-only UI elements when printing to PDF */
+  header, 
+  nav, 
+  .no-print, 
+  button, 
+  form,
+  .print-hidden {
+    display: none !important;
+  }
+
+  /* Ensure questions don't get awkwardly split across pages */
+  .review-card {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    margin-bottom: 20px !important;
+    border: 1.5px solid #cbd5e1 !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+  }
+
+  /* Printable Header */
+  .print-only-header {
+    display: block !important;
+    border-bottom: 2px solid #0f172a !important;
+    padding-bottom: 15px !important;
+    margin-bottom: 20px !important;
+  }
+
+  .print-explanation-box {
+    display: block !important;
+    background-color: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+}
+
+@media screen {
+  .print-only-header {
+    display: none !important;
+  }
+}

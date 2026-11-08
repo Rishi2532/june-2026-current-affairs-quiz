@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+quiz-app/node_modules/
+
+# Production build
+dist/
+quiz-app/dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Environment & cache
+.env
+.env.local
+.env.*.local
+__pycache__/
+*.pyc
+
+# System & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

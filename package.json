@@ -1,0 +1,13 @@
+{
+  "name": "june-2026-current-affairs-quiz",
+  "version": "1.0.0",
+  "private": true,
+  "description": "June 2026 Current Affairs – Complete 595 Questions Quiz Application",
+  "scripts": {
+    "dev": "npm --prefix quiz-app run dev",
+    "build": "npm --prefix quiz-app run build",
+    "preview": "npm --prefix quiz-app run preview",
+    "start": "npm --prefix quiz-app run dev"
+  }
+}
+
