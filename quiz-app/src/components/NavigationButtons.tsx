@@ -21,8 +21,8 @@ export const NavigationButtons: React.FC<NavigationButtonsProps> = ({
   onToggleMobilePalette,
 }) => {
   return (
-    <div className="bg-white border-t border-slate-200 px-3 sm:px-6 py-3 shadow-lg sticky bottom-0 z-20">
-      <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 sm:gap-4">
+    <div className="flex-shrink-0 bg-white border-t border-slate-200 px-3 sm:px-6 py-2 sm:py-2.5 shadow-md z-30 select-none">
+      <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
         
         {/* Left Side: Mark for Review & Clear */}
         <div className="flex items-center gap-2">

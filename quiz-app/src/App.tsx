@@ -309,7 +309,7 @@ export const App: React.FC = () => {
         handleSelectOption(chosen);
       } else if (['A', 'B', 'C', 'D', 'E'].includes(key)) {
         handleSelectOption(key);
-      } else if (e.key === 'ArrowRight' || key === 'N') {
+      } else if (e.key === 'ArrowRight' || key === 'N' || e.key === 'Enter') {
         handleSaveAndNext();
       } else if (e.key === 'ArrowLeft' || key === 'P') {
         handlePrevious();
@@ -426,7 +426,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-100 text-slate-800">
+    <div className={`flex flex-col bg-slate-100 text-slate-800 ${examView === 'exam' ? 'h-screen h-[100dvh] max-h-[100dvh] overflow-hidden' : 'min-h-screen'}`}>
       
       {/* View 1: Instructions Page */}
       {examView === 'instructions' && (
@@ -441,26 +441,28 @@ export const App: React.FC = () => {
 
       {/* View 2: Live Examination Mode */}
       {examView === 'exam' && (
-        <div className="flex-1 flex flex-col h-screen overflow-hidden">
+        <div className="flex-1 min-h-0 flex flex-col h-full overflow-hidden">
           {/* Header */}
-          <Header
-            totalQuestions={TOTAL_QUESTIONS}
-            responses={progress.responses}
-            statuses={progress.statuses}
-            timeSpentSeconds={progress.timeSpentSeconds}
-            timerMode={progress.timerMode}
-            countdownSeconds={progress.countdownSeconds}
-            onOpenSubmitModal={() => setIsSubmitModalOpen(true)}
-            candidateName={progress.candidateName || 'Candidate'}
-            fontSize={progress.fontSize || 'large'}
-            onFontSizeChange={handleFontSizeChange}
-          />
+          <div className="flex-shrink-0">
+            <Header
+              totalQuestions={TOTAL_QUESTIONS}
+              responses={progress.responses}
+              statuses={progress.statuses}
+              timeSpentSeconds={progress.timeSpentSeconds}
+              timerMode={progress.timerMode}
+              countdownSeconds={progress.countdownSeconds}
+              onOpenSubmitModal={() => setIsSubmitModalOpen(true)}
+              candidateName={progress.candidateName || 'Candidate'}
+              fontSize={progress.fontSize || 'large'}
+              onFontSizeChange={handleFontSizeChange}
+            />
+          </div>
 
           {/* Main Content Area: Question Display + Sidebar Palette */}
-          <main className="flex-1 flex overflow-hidden p-2 sm:p-4 gap-4 max-w-7xl mx-auto w-full">
+          <main className="flex-1 min-h-0 flex overflow-hidden p-2 sm:p-3 lg:p-4 gap-3 lg:gap-4 max-w-7xl mx-auto w-full">
             
             {/* Center: Question Area */}
-            <div className="flex-1 flex flex-col h-full min-w-0">
+            <div className="flex-1 min-h-0 flex flex-col h-full min-w-0">
               <QuestionDisplay
                 question={currentQuestion}
                 totalQuestions={TOTAL_QUESTIONS}
@@ -469,33 +471,40 @@ export const App: React.FC = () => {
                 status={currentStatus}
                 onClearResponse={handleClearResponse}
                 onToggleMarkForReview={handleToggleMarkForReview}
+                onSaveAndNext={handleSaveAndNext}
+                onPrevious={handlePrevious}
+                onMarkForReviewAndNext={handleMarkForReviewAndNext}
                 fontSize={progress.fontSize || 'large'}
                 onFontSizeChange={handleFontSizeChange}
               />
             </div>
 
             {/* Right: Question Navigation Palette */}
-            <QuestionPalette
-              totalQuestions={TOTAL_QUESTIONS}
-              currentQuestionId={progress.currentQuestionId}
-              statuses={progress.statuses}
-              onSelectQuestion={handleSelectQuestion}
-              isOpenMobile={isMobilePaletteOpen}
-              onCloseMobile={() => setIsMobilePaletteOpen(false)}
-            />
+            <div className="h-full min-h-0 flex">
+              <QuestionPalette
+                totalQuestions={TOTAL_QUESTIONS}
+                currentQuestionId={progress.currentQuestionId}
+                statuses={progress.statuses}
+                onSelectQuestion={handleSelectQuestion}
+                isOpenMobile={isMobilePaletteOpen}
+                onCloseMobile={() => setIsMobilePaletteOpen(false)}
+              />
+            </div>
 
           </main>
 
           {/* Bottom Action Bar */}
-          <NavigationButtons
-            currentQuestionId={progress.currentQuestionId}
-            totalQuestions={TOTAL_QUESTIONS}
-            onPrevious={handlePrevious}
-            onSaveAndNext={handleSaveAndNext}
-            onMarkForReviewAndNext={handleMarkForReviewAndNext}
-            onClearResponse={handleClearResponse}
-            onToggleMobilePalette={() => setIsMobilePaletteOpen(!isMobilePaletteOpen)}
-          />
+          <div className="flex-shrink-0">
+            <NavigationButtons
+              currentQuestionId={progress.currentQuestionId}
+              totalQuestions={TOTAL_QUESTIONS}
+              onPrevious={handlePrevious}
+              onSaveAndNext={handleSaveAndNext}
+              onMarkForReviewAndNext={handleMarkForReviewAndNext}
+              onClearResponse={handleClearResponse}
+              onToggleMobilePalette={() => setIsMobilePaletteOpen(!isMobilePaletteOpen)}
+            />
+          </div>
 
           {/* Submission Modal Dialog */}
           <SubmitModal
