@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import rawQuestions from './data/questions.json';
-import { Question, ExamView, QuizProgress, ExamStats, QuestionStatus } from './types';
+import rawQuestionsJune from './data/questions_june.json';
+import rawQuestionsJuly from './data/questions_july.json';
+import { Question, ExamView, QuizProgress, ExamStats, QuestionStatus, QuizMonth } from './types';
 import { loadProgress, saveProgress, clearProgress } from './utils/storage';
 import { Header } from './components/Header';
 import { QuestionDisplay } from './components/QuestionDisplay';
@@ -12,16 +13,53 @@ import { ResultsDashboard } from './components/ResultsDashboard';
 import { QuestionReviewList } from './components/QuestionReviewList';
 import confetti from 'canvas-confetti';
 
-const questions: Question[] = rawQuestions as Question[];
-const TOTAL_QUESTIONS = questions.length; // 595
+const questionsJune: Question[] = rawQuestionsJune as Question[];
+const questionsJuly: Question[] = rawQuestionsJuly as Question[];
 
 export const App: React.FC = () => {
-  // Load saved progress
-  const [progress, setProgress] = useState<QuizProgress>(() => loadProgress(TOTAL_QUESTIONS));
+  // Selected Month state: 'july' | 'june'
+  const [selectedMonth, setSelectedMonth] = useState<QuizMonth>(() => {
+    try {
+      const saved = localStorage.getItem('active_quiz_month');
+      if (saved === 'june' || saved === 'july') return saved as QuizMonth;
+    } catch (e) {}
+    return 'july'; // Default to July 2026 quiz
+  });
+
+  // Active questions dataset based on selected month
+  const questions: Question[] = useMemo(() => {
+    return selectedMonth === 'july' ? questionsJuly : questionsJune;
+  }, [selectedMonth]);
+
+  const TOTAL_QUESTIONS = questions.length; // 594 for July, 595 for June
+  const monthTitle = selectedMonth === 'july' ? 'July 2026' : 'June 2026';
+  const otherMonth: QuizMonth = selectedMonth === 'july' ? 'june' : 'july';
+  const otherMonthTitle = otherMonth === 'july' ? 'July 2026 (594 Qs)' : 'June 2026 (595 Qs)';
+
+  // Load saved progress for the active month
+  const [progress, setProgress] = useState<QuizProgress>(() => {
+    const initMonth = (() => {
+      try {
+        const saved = localStorage.getItem('active_quiz_month');
+        if (saved === 'june' || saved === 'july') return saved as QuizMonth;
+      } catch (e) {}
+      return 'july';
+    })();
+    const count = initMonth === 'july' ? questionsJuly.length : questionsJune.length;
+    return loadProgress(count, initMonth);
+  });
   
   // View state: 'instructions' | 'exam' | 'results'
   const [examView, setExamView] = useState<ExamView>(() => {
-    const saved = loadProgress(TOTAL_QUESTIONS);
+    const initMonth = (() => {
+      try {
+        const saved = localStorage.getItem('active_quiz_month');
+        if (saved === 'june' || saved === 'july') return saved as QuizMonth;
+      } catch (e) {}
+      return 'july';
+    })();
+    const count = initMonth === 'july' ? questionsJuly.length : questionsJune.length;
+    const saved = loadProgress(count, initMonth);
     if (saved.isSubmitted) return 'results';
     return 'instructions';
   });
@@ -29,6 +67,22 @@ export const App: React.FC = () => {
   const [isSubmitModalOpen, setIsSubmitModalOpen] = useState(false);
   const [isMobilePaletteOpen, setIsMobilePaletteOpen] = useState(false);
   const [negativeMarkingEnabled, setNegativeMarkingEnabled] = useState(false);
+
+  // Switch Quiz Month Handler
+  const handleSelectMonth = useCallback((month: QuizMonth) => {
+    setSelectedMonth(month);
+    try {
+      localStorage.setItem('active_quiz_month', month);
+    } catch (e) {}
+    const count = month === 'july' ? questionsJuly.length : questionsJune.length;
+    const loaded = loadProgress(count, month);
+    setProgress(loaded);
+    if (loaded.isSubmitted) {
+      setExamView('results');
+    } else {
+      setExamView('instructions');
+    }
+  }, []);
 
   // Sync to LocalStorage whenever progress changes
   useEffect(() => {
@@ -76,7 +130,7 @@ export const App: React.FC = () => {
   // Current Question
   const currentQuestion = useMemo(() => {
     return questions.find((q) => q.id === progress.currentQuestionId) || questions[0];
-  }, [progress.currentQuestionId]);
+  }, [questions, progress.currentQuestionId]);
 
   // Current question selected answer
   const currentSelection = progress.responses[currentQuestion.id];
@@ -194,7 +248,7 @@ export const App: React.FC = () => {
         statuses: nextStatuses,
       };
     });
-  }, []);
+  }, [TOTAL_QUESTIONS]);
 
   // Handler: Mark for Review & Next
   const handleMarkForReviewAndNext = useCallback(() => {
@@ -227,7 +281,7 @@ export const App: React.FC = () => {
         statuses: nextStatuses,
       };
     });
-  }, []);
+  }, [TOTAL_QUESTIONS]);
 
   // Handler: Previous Question
   const handlePrevious = useCallback(() => {
@@ -291,7 +345,7 @@ export const App: React.FC = () => {
         statuses: nextStatuses,
       };
     });
-  }, []);
+  }, [TOTAL_QUESTIONS]);
 
   // Keyboard navigation support
   useEffect(() => {
@@ -347,6 +401,7 @@ export const App: React.FC = () => {
   const handleStartExam = (timerMode: 'stopwatch' | 'countdown') => {
     setProgress((prev) => ({
       ...prev,
+      month: selectedMonth,
       timerMode,
       timeSpentSeconds: 0,
       isSubmitted: false,
@@ -361,7 +416,7 @@ export const App: React.FC = () => {
 
   // Reset / Retake Exam Handler
   const handleResetExam = () => {
-    const fresh = clearProgress(TOTAL_QUESTIONS);
+    const fresh = clearProgress(TOTAL_QUESTIONS, selectedMonth);
     setProgress(fresh);
     setExamView('instructions');
   };
@@ -407,7 +462,7 @@ export const App: React.FC = () => {
       answeredMarked: answeredMarkedCount,
       timeSpentSeconds: progress.timeSpentSeconds,
     };
-  }, [progress.responses, progress.statuses, progress.timeSpentSeconds]);
+  }, [questions, progress.responses, progress.statuses, progress.timeSpentSeconds, TOTAL_QUESTIONS]);
 
   // Scroll to review section
   const handleScrollToReview = () => {
@@ -428,10 +483,12 @@ export const App: React.FC = () => {
   return (
     <div className={`flex flex-col bg-slate-100 text-slate-800 ${examView === 'exam' ? 'h-screen h-[100dvh] max-h-[100dvh] overflow-hidden' : 'min-h-screen'}`}>
       
-      {/* View 1: Instructions Page */}
+      {/* View 1: Instructions & Quiz Selection Page */}
       {examView === 'instructions' && (
         <InstructionsPage
           totalQuestions={TOTAL_QUESTIONS}
+          selectedMonth={selectedMonth}
+          onSelectMonth={handleSelectMonth}
           onStartExam={handleStartExam}
           onResumeExam={handleResumeExam}
           onResetExam={handleResetExam}
@@ -452,9 +509,11 @@ export const App: React.FC = () => {
               timerMode={progress.timerMode}
               countdownSeconds={progress.countdownSeconds}
               onOpenSubmitModal={() => setIsSubmitModalOpen(true)}
-              candidateName={progress.candidateName || 'Candidate'}
+              candidateName={progress.candidateName || `Candidate (${monthTitle})`}
               fontSize={progress.fontSize || 'large'}
               onFontSizeChange={handleFontSizeChange}
+              monthTitle={monthTitle}
+              onSwitchQuiz={() => setExamView('instructions')}
             />
           </div>
 
@@ -518,7 +577,7 @@ export const App: React.FC = () => {
         </div>
       )}
 
-      {/* View 3: Submitted Results & Complete 595 Review Page */}
+      {/* View 3: Submitted Results & Complete Review Page */}
       {examView === 'results' && (
         <div className="flex-1 flex flex-col">
           {/* Top Bar for Results View */}
@@ -527,10 +586,17 @@ export const App: React.FC = () => {
               <div className="flex items-center gap-2.5">
                 <span className="w-3.5 h-3.5 rounded-full bg-emerald-400"></span>
                 <span className="font-extrabold text-sm sm:text-base">
-                  June 2026 Current Affairs – Exam Solutions & Review Portal
+                  {monthTitle} Current Affairs – Exam Solutions & Review Portal
                 </span>
               </div>
               <div className="flex items-center gap-3">
+                <button
+                  onClick={() => handleSelectMonth(otherMonth)}
+                  className="px-3.5 py-1.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-xs sm:text-sm font-bold shadow-xs cursor-pointer flex items-center gap-1.5"
+                >
+                  <span>Take {otherMonthTitle}</span>
+                </button>
+
                 <button
                   onClick={handleTriggerPrint}
                   className="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs sm:text-sm font-bold shadow-xs cursor-pointer flex items-center gap-1.5"
@@ -558,16 +624,20 @@ export const App: React.FC = () => {
                 negativeMarkingEnabled={negativeMarkingEnabled}
                 onToggleNegativeMarking={() => setNegativeMarkingEnabled(!negativeMarkingEnabled)}
                 onDownloadPDF={handleTriggerPrint}
+                monthTitle={monthTitle}
+                onSwitchToOtherQuiz={() => handleSelectMonth(otherMonth)}
+                otherMonthName={otherMonthTitle}
               />
             </div>
 
-            {/* Mandatory Feature: All 595 Questions Review List */}
+            {/* Mandatory Feature: All Questions Review List */}
             <QuestionReviewList
               questions={questions}
               responses={progress.responses}
               statuses={progress.statuses}
               fontSize={progress.fontSize || 'large'}
               onFontSizeChange={handleFontSizeChange}
+              monthTitle={monthTitle}
             />
           </main>
         </div>

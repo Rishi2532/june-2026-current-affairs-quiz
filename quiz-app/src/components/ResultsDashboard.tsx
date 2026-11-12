@@ -12,6 +12,9 @@ interface ResultsDashboardProps {
   negativeMarkingEnabled: boolean;
   onToggleNegativeMarking: () => void;
   onDownloadPDF?: () => void;
+  monthTitle?: string;
+  onSwitchToOtherQuiz?: () => void;
+  otherMonthName?: string;
 }
 
 export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
@@ -21,6 +24,9 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
   negativeMarkingEnabled,
   onToggleNegativeMarking,
   onDownloadPDF,
+  monthTitle = 'July 2026',
+  onSwitchToOtherQuiz,
+  otherMonthName,
 }) => {
   // Score calculations
   const standardScore = stats.correct;
@@ -71,18 +77,27 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
                 Mock Test Performance Report
               </h2>
               <p className="text-xs sm:text-sm text-slate-300 mt-1">
-                June 2026 Current Affairs – Full 595 Questions Test
+                {monthTitle} Current Affairs – Full {stats.totalQuestions} Questions Test
               </p>
             </div>
           </div>
 
           {/* Quick Buttons */}
           <div className="flex flex-wrap items-center justify-center gap-3">
+            {onSwitchToOtherQuiz && (
+              <button
+                onClick={onSwitchToOtherQuiz}
+                className="px-5 py-2.5 rounded-lg bg-amber-600 hover:bg-amber-500 active:scale-95 text-white text-xs sm:text-sm font-bold shadow-md transition-all flex items-center gap-2 cursor-pointer"
+              >
+                <span>Take {otherMonthName || 'Other Month'} Quiz</span>
+              </button>
+            )}
+
             {onDownloadPDF && (
               <button
                 onClick={onDownloadPDF}
                 className="px-5 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs sm:text-sm font-bold shadow-md transition-all flex items-center gap-2 cursor-pointer"
-                title="Print or Save complete response sheet with all 595 questions, answers, and explanations as PDF"
+                title={`Print or Save complete response sheet with all ${stats.totalQuestions} questions, answers, and explanations as PDF`}
               >
                 <Printer className="w-4 h-4" />
                 <span>Download PDF Response Sheet</span>
@@ -94,7 +109,7 @@ export const ResultsDashboard: React.FC<ResultsDashboardProps> = ({
               className="px-5 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 active:scale-95 text-white text-xs sm:text-sm font-bold shadow-md transition-all flex items-center gap-2 cursor-pointer"
             >
               <BookOpen className="w-4 h-4" />
-              <span>Review All 595 Answers</span>
+              <span>Review All {stats.totalQuestions} Answers</span>
               <ArrowDown className="w-4 h-4" />
             </button>
 

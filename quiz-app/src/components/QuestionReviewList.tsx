@@ -14,6 +14,7 @@ interface QuestionReviewListProps {
   statuses: QuestionStatuses;
   fontSize?: 'normal' | 'large' | 'xlarge';
   onFontSizeChange?: (size: 'normal' | 'large' | 'xlarge') => void;
+  monthTitle?: string;
 }
 
 type FilterType = 'all' | 'correct' | 'incorrect' | 'unattempted' | 'marked';
@@ -24,6 +25,7 @@ export const QuestionReviewList: React.FC<QuestionReviewListProps> = ({
   statuses,
   fontSize = 'large',
   onFontSizeChange,
+  monthTitle = 'July 2026',
 }) => {
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -264,10 +266,10 @@ export const QuestionReviewList: React.FC<QuestionReviewListProps> = ({
       {/* Printable Header (Visible only when generating PDF via window.print) */}
       <div className="print-only-header hidden">
         <h1 className="text-2xl font-bold text-slate-900">
-          June 2026 Current Affairs – Complete Examination Response Sheet
+          {monthTitle} Current Affairs – Complete Examination Response Sheet
         </h1>
         <p className="text-sm text-slate-600 mt-1">
-          Full 595 Questions Practice Exam | Official Solutions and Detailed Explanations
+          Full {questions.length} Questions Practice Exam | Official Solutions and Detailed Explanations
         </p>
         <div className="mt-3 text-xs text-slate-700 flex flex-wrap gap-4 border-t border-slate-300 pt-2 font-semibold">
           <span>Total Questions: <strong>{questions.length}</strong></span>
@@ -716,7 +718,7 @@ export const QuestionReviewList: React.FC<QuestionReviewListProps> = ({
                           <span>Complete Solution & Source Explanation</span>
                         </div>
                         <span className="text-xs font-semibold text-blue-700 bg-blue-100/70 px-2.5 py-1 rounded-md border border-blue-200">
-                          June 2026 Current Affairs
+                          {monthTitle} Current Affairs
                         </span>
                       </div>
 

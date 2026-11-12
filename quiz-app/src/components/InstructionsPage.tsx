@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Clock, BookOpen, CheckCircle, ArrowRight, Play, RotateCcw } from 'lucide-react';
-import { QuizProgress } from '../types';
+import { ShieldCheck, Clock, BookOpen, CheckCircle, ArrowRight, Play, RotateCcw, Calendar, Check } from 'lucide-react';
+import { QuizProgress, QuizMonth } from '../types';
 
 interface InstructionsPageProps {
   totalQuestions: number;
+  selectedMonth: QuizMonth;
+  onSelectMonth: (month: QuizMonth) => void;
   onStartExam: (timerMode: 'stopwatch' | 'countdown') => void;
   onResumeExam: () => void;
   onResetExam: () => void;
@@ -12,6 +14,8 @@ interface InstructionsPageProps {
 
 export const InstructionsPage: React.FC<InstructionsPageProps> = ({
   totalQuestions,
+  selectedMonth,
+  onSelectMonth,
   onStartExam,
   onResumeExam,
   onResetExam,
@@ -21,10 +25,11 @@ export const InstructionsPage: React.FC<InstructionsPageProps> = ({
   const [selectedTimerMode, setSelectedTimerMode] = useState<'stopwatch' | 'countdown'>('stopwatch');
 
   const hasSavedProgress = Object.keys(savedProgress.responses).length > 0 || savedProgress.currentQuestionId > 1;
+  const monthName = selectedMonth === 'july' ? 'July 2026' : 'June 2026';
 
   return (
     <div className="min-h-screen bg-slate-100 py-6 sm:py-10 px-3 sm:px-6 flex flex-col justify-center items-center">
-      <div className="max-w-4xl w-full bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden">
+      <div className="max-w-4xl w-full bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
         
         {/* Header Banner */}
         <div className="bg-[#1e293b] text-white p-5 sm:p-7 border-b border-slate-700">
@@ -38,18 +43,107 @@ export const InstructionsPage: React.FC<InstructionsPageProps> = ({
                   Official Banking Mock Test Series
                 </span>
                 <h1 className="text-lg sm:text-2xl font-bold tracking-tight text-white">
-                  June 2026 Current Affairs – Complete Mock Test
+                  {monthName} Current Affairs – Complete Mock Test
                 </h1>
                 <p className="text-xs sm:text-sm text-slate-300 mt-0.5">
-                  Comprehensive 595 Questions Practice Exam (SBI Clerk / IBPS Pattern)
+                  Comprehensive {totalQuestions} Questions Practice Exam (SBI Clerk / IBPS Pattern)
                 </p>
               </div>
             </div>
 
-            <div className="bg-slate-800/80 rounded-lg p-3 border border-slate-700 text-right flex-shrink-0">
+            <div className="bg-slate-800/80 rounded-xl p-3 border border-slate-700 text-right flex-shrink-0">
               <div className="text-xs text-slate-400">Total Questions</div>
               <div className="text-xl sm:text-2xl font-extrabold text-yellow-400">{totalQuestions}</div>
               <div className="text-[11px] text-slate-400">Max Marks: {totalQuestions}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* QUIZ SELECTOR: Choose between June and July 2026 */}
+        <div className="bg-slate-50 border-b border-slate-200 p-4 sm:p-6">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-blue-600" />
+              <span className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-slate-700">
+                Choose Examination Quiz
+              </span>
+            </div>
+            <span className="text-xs font-bold text-slate-500">
+              Select one quiz to attempt
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            {/* June 2026 Option */}
+            <div
+              onClick={() => onSelectMonth('june')}
+              className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-150 select-none relative ${
+                selectedMonth === 'june'
+                  ? 'bg-blue-50/90 border-blue-600 shadow-md ring-2 ring-blue-400/30'
+                  : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+              }`}
+            >
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-extrabold text-base text-slate-900">
+                      June 2026 Current Affairs
+                    </span>
+                    {selectedMonth === 'june' && (
+                      <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-blue-600 text-white flex items-center gap-1">
+                        <Check className="w-3 h-3 stroke-[3]" /> Active
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Guidely Monthly Current Affairs Quiz PDF
+                  </p>
+                </div>
+                <span className="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 text-xs font-black border border-slate-300">
+                  595 Qs
+                </span>
+              </div>
+
+              <div className="mt-3 pt-2.5 border-t border-slate-200/80 flex items-center justify-between text-xs">
+                <span className="text-slate-600 font-medium">Standard +1 Mark Scheme</span>
+                <span className="text-blue-700 font-bold">Full Mock Test 1</span>
+              </div>
+            </div>
+
+            {/* July 2026 Option */}
+            <div
+              onClick={() => onSelectMonth('july')}
+              className={`p-4 rounded-xl border-2 cursor-pointer transition-all duration-150 select-none relative ${
+                selectedMonth === 'july'
+                  ? 'bg-blue-50/90 border-blue-600 shadow-md ring-2 ring-blue-400/30'
+                  : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+              }`}
+            >
+              <div className="flex items-start justify-between">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span className="font-extrabold text-base text-slate-900">
+                      July 2026 Current Affairs
+                    </span>
+                    {selectedMonth === 'july' && (
+                      <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-blue-600 text-white flex items-center gap-1">
+                        <Check className="w-3 h-3 stroke-[3]" /> Active
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Guidely Monthly Current Affairs Quiz PDF
+                  </p>
+                </div>
+                <span className="px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-900 text-xs font-black border border-emerald-300">
+                  594 Qs
+                </span>
+              </div>
+
+              <div className="mt-3 pt-2.5 border-t border-slate-200/80 flex items-center justify-between text-xs">
+                <span className="text-slate-600 font-medium">Standard +1 Mark Scheme</span>
+                <span className="text-emerald-700 font-bold">Full Mock Test 2</span>
+              </div>
             </div>
           </div>
         </div>
@@ -63,7 +157,7 @@ export const InstructionsPage: React.FC<InstructionsPageProps> = ({
               </div>
               <div>
                 <h2 className="text-sm font-bold text-emerald-900">
-                  Unfinished Test Session Detected
+                  Unfinished {monthName} Session Detected
                 </h2>
                 <p className="text-xs text-emerald-700">
                   You have already attempted {Object.keys(savedProgress.responses).length} of {totalQuestions} questions. You can resume from Question #{savedProgress.currentQuestionId}.
@@ -74,7 +168,7 @@ export const InstructionsPage: React.FC<InstructionsPageProps> = ({
               <button
                 type="button"
                 onClick={onResetExam}
-                className="flex-1 sm:flex-initial px-3 py-1.5 rounded-md border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1"
+                className="flex-1 sm:flex-initial px-3 py-1.5 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1 cursor-pointer"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 Reset & Restart
@@ -82,7 +176,7 @@ export const InstructionsPage: React.FC<InstructionsPageProps> = ({
               <button
                 type="button"
                 onClick={onResumeExam}
-                className="flex-1 sm:flex-initial px-4 py-1.5 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm"
+                className="flex-1 sm:flex-initial px-4 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
               >
                 <Play className="w-3.5 h-3.5 fill-current" />
                 Resume Test
@@ -92,20 +186,20 @@ export const InstructionsPage: React.FC<InstructionsPageProps> = ({
         )}
 
         {/* Instructions Body */}
-        <div className="p-5 sm:p-7 space-y-6 text-slate-700 text-sm leading-relaxed max-h-[60vh] overflow-y-auto">
+        <div className="p-5 sm:p-7 space-y-6 text-slate-700 text-sm leading-relaxed max-h-[55vh] overflow-y-auto">
           
           <section className="space-y-2">
             <h2 className="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-200 pb-1.5">
               <BookOpen className="w-4 h-4 text-blue-600" />
-              General Instructions
+              General Examination Instructions ({monthName})
             </h2>
             <ul className="list-disc list-inside space-y-1.5 text-xs sm:text-sm text-slate-600 pl-1">
-              <li>This test contains a total of <strong>595 multiple-choice questions</strong> based on June 2026 Current Affairs.</li>
+              <li>This test contains a total of <strong>{totalQuestions} multiple-choice questions</strong> strictly based on {monthName} Current Affairs.</li>
               <li>Each question carries <strong>1 mark</strong>. There is <strong>no negative marking</strong> in this test.</li>
               <li>All questions have five options (A, B, C, D, E). Only one option is correct.</li>
               <li>You can navigate between questions at any time using the <strong>Question Palette</strong> or the <strong>Previous / Save & Next</strong> buttons.</li>
               <li>Your progress and selected answers are <strong>automatically saved in your browser</strong>, so an accidental reload will not erase your attempt.</li>
-              <li>After completing the test, click <strong>Submit Test</strong> to view your detailed score card and complete explanations for all 595 questions.</li>
+              <li>After completing the test, click <strong>Submit Test</strong> to view your detailed score card and complete explanations for all {totalQuestions} questions.</li>
             </ul>
           </section>
 
@@ -177,7 +271,7 @@ export const InstructionsPage: React.FC<InstructionsPageProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <label
                 onClick={() => setSelectedTimerMode('stopwatch')}
-                className={`p-3.5 rounded-lg border cursor-pointer flex items-start gap-3 transition-all ${
+                className={`p-3.5 rounded-xl border cursor-pointer flex items-start gap-3 transition-all ${
                   selectedTimerMode === 'stopwatch'
                     ? 'border-blue-600 bg-blue-50/70 ring-1 ring-blue-500'
                     : 'border-slate-200 hover:bg-slate-50'
@@ -193,14 +287,14 @@ export const InstructionsPage: React.FC<InstructionsPageProps> = ({
                 <div>
                   <span className="font-bold text-slate-800 text-sm">Practice Mode (Unlimited Time)</span>
                   <p className="text-xs text-slate-500 mt-0.5">
-                    Timer counts upward. Attempt all 595 questions at your own comfortable pace without time pressure.
+                    Timer counts upward. Attempt all {totalQuestions} questions at your own comfortable pace without time pressure.
                   </p>
                 </div>
               </label>
 
               <label
                 onClick={() => setSelectedTimerMode('countdown')}
-                className={`p-3.5 rounded-lg border cursor-pointer flex items-start gap-3 transition-all ${
+                className={`p-3.5 rounded-xl border cursor-pointer flex items-start gap-3 transition-all ${
                   selectedTimerMode === 'countdown'
                     ? 'border-blue-600 bg-blue-50/70 ring-1 ring-blue-500'
                     : 'border-slate-200 hover:bg-slate-50'
@@ -235,26 +329,26 @@ export const InstructionsPage: React.FC<InstructionsPageProps> = ({
               className="mt-1 w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"
             />
             <span className="text-xs sm:text-sm text-slate-700">
-              I have read and understood all instructions. I understand that the test contains 595 questions from June 2026 Current Affairs and that my full result with complete solutions will be revealed upon test submission.
+              I have read and understood all instructions. I understand that the test contains {totalQuestions} questions from {monthName} Current Affairs and that my full result with complete solutions will be revealed upon test submission.
             </span>
           </label>
 
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
             <span className="text-xs text-slate-500">
-              Candidate System: <strong>NODE-2026-CA595</strong>
+              Selected Test: <strong className="text-blue-900">{monthName} ({totalQuestions} Questions)</strong>
             </span>
 
             <button
               type="button"
               disabled={!agreed}
               onClick={() => onStartExam(selectedTimerMode)}
-              className={`w-full sm:w-auto px-8 py-3 rounded-lg text-sm sm:text-base font-bold flex items-center justify-center gap-2 shadow-md transition-all ${
+              className={`w-full sm:w-auto px-8 py-3 rounded-xl text-sm sm:text-base font-bold flex items-center justify-center gap-2 shadow-md transition-all ${
                 agreed
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white active:scale-95'
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white active:scale-95 cursor-pointer'
                   : 'bg-slate-200 text-slate-400 cursor-not-allowed'
               }`}
             >
-              <span>I am ready to begin</span>
+              <span>Begin {monthName} Mock Test</span>
               <ArrowRight className="w-5 h-5" />
             </button>
           </div>

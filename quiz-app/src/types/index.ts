@@ -1,3 +1,5 @@
+export type QuizMonth = 'june' | 'july';
+
 export interface Option {
   key: string;
   text: string;
@@ -29,6 +31,7 @@ export interface QuestionStatuses {
 export type ExamView = 'instructions' | 'exam' | 'results';
 
 export interface QuizProgress {
+  month: QuizMonth;
   currentQuestionId: number;
   responses: UserResponses;
   statuses: QuestionStatuses;

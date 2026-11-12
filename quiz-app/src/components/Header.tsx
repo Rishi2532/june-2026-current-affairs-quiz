@@ -13,6 +13,8 @@ interface HeaderProps {
   candidateName: string;
   fontSize?: 'normal' | 'large' | 'xlarge';
   onFontSizeChange?: (size: 'normal' | 'large' | 'xlarge') => void;
+  monthTitle?: string;
+  onSwitchQuiz?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -26,6 +28,8 @@ export const Header: React.FC<HeaderProps> = ({
   candidateName,
   fontSize = 'large',
   onFontSizeChange,
+  monthTitle = 'July 2026',
+  onSwitchQuiz,
 }) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -68,11 +72,21 @@ export const Header: React.FC<HeaderProps> = ({
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="font-extrabold text-sm sm:text-base tracking-wide text-white">
-                  June 2026 Current Affairs – Full Mock Test
+                  {monthTitle} Current Affairs – Full Mock Test
                 </h1>
                 <span className="hidden sm:inline-block px-2 py-0.5 text-xs font-semibold rounded bg-blue-900/60 text-blue-200 border border-blue-700">
                   IBPS / SBI Pattern
                 </span>
+                {onSwitchQuiz && (
+                  <button
+                    type="button"
+                    onClick={onSwitchQuiz}
+                    className="ml-1 text-[11px] font-bold text-amber-300 hover:text-amber-200 bg-amber-950/60 hover:bg-amber-900/80 px-2 py-0.5 rounded border border-amber-600/50 cursor-pointer"
+                    title="Switch Month Quiz"
+                  >
+                    Switch Quiz
+                  </button>
+                )}
               </div>
               <div className="flex items-center gap-3 text-xs text-slate-300 mt-0.5">
                 <span className="flex items-center gap-1 font-medium">
